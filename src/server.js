@@ -6,7 +6,7 @@ const path = require("path");
 // Middleware para arquivos estáticos
 app.use(express.static(path.join(__dirname, ".", "public")));
 
-const usuariosRoutes = require('./src/routes/usuarios');
+const usuariosRoutes = require('./routes/usuarios');
 
 app.use(express.json());
 
