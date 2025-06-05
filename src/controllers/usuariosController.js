@@ -1,5 +1,17 @@
 const db = require('../db/knex');
 
+exports.obter = async (req, res) => {
+  try {
+    const usuario = await db("usuarios").where({ id: req.params.id }).first();
+    if (!usuario) {
+      return res.status(404).json({ erro: "Usuário não encontrado" });
+    }
+    res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao buscar usuário" });
+  }
+};
+
 exports.listar = async (req, res) => {
   try {
     const usuarios = await db('usuarios');

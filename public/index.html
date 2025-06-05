@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Usuários - CRUD</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    input,
+    button {
+      margin: 5px 0;
+      padding: 6px;
+      width: 100%;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Cadastro de Usuários</h1>
+
+  <form id="userForm">
+    <input type="hidden" id="id" />
+    <input type="text" id="nome" placeholder="Nome" required />
+    <input type="date" id="data_nascimento" required />
+    <input type="text" id="telefone" placeholder="Telefone" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <button type="submit">Salvar</button>
+  </form>
+
+  <h2>Lista de Usuários</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Data de Nascimento</th>
+        <th>Telefone</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:3000/usuarios";
+
+    async function carregarUsuarios() {
+      const res = await fetch(API_URL);
+      const usuarios = await res.json();
+      const tabela = document.getElementById("userTable");
+      tabela.innerHTML = "";
+
+      usuarios.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.nome}</td>
+          <td>${user.data_nascimento}</td>
+          <td>${user.telefone}</td>
+          <td>${user.email}</td>
+          <td class="actions">
+            <button onclick="editarUsuario(${user.id})">Editar</button>
+            <button onclick="excluirUsuario(${user.id})">Excluir</button>
+          </td>
+        `;
+        tabela.appendChild(row);
+      });
+    }
+
+    async function salvarUsuario(e) {
+      e.preventDefault();
+      const id = document.getElementById("id").value;
+      const data = {
+        nome: document.getElementById("nome").value,
+        data_nascimento: document.getElementById("data_nascimento").value,
+        telefone: document.getElementById("telefone").value,
+        email: document.getElementById("email").value,
+      };
+
+      const metodo = id ? "PUT" : "POST";
+      const url = id ? `${API_URL}/${id}` : API_URL;
+
+      await fetch(url, {
+        method: metodo,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      document.getElementById("userForm").reset();
+      carregarUsuarios();
+    }
+
+    async function editarUsuario(id) {
+      const res = await fetch(`${API_URL}/${id}`, { method: "GET" });
+      const user = await res.json();
+
+      document.getElementById("id").value = id;
+      document.getElementById("nome").value = user.nome;
+      document.getElementById("data_nascimento").value = user.data_nascimento.substr(0,10);
+      document.getElementById("telefone").value = user.telefone;
+      document.getElementById("email").value = user.email;
+    }
+
+    async function excluirUsuario(id) {
+      if (confirm("Deseja excluir este usuário?")) {
+        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        carregarUsuarios();
+      }
+    }
+
+    document.getElementById("userForm").addEventListener("submit", salvarUsuario);
+    carregarUsuarios();
+  </script>
+
+</body>
+</html>
