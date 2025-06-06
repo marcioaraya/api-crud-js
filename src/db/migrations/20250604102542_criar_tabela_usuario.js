@@ -1,12 +1,5 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.up = function(knex) {
-  
-};
-exports.up = function(knex) {
-  return knex.schema.createTable('usuarios', function(table) {
+exports.up = function (knex) {
+  return knex.schema.createTable('usuarios', function (table) {
     table.increments('id').primary();
     table.string('nome', 120).notNullable();
     table.date('data_nascimento').notNullable();
@@ -15,14 +8,7 @@ exports.up = function(knex) {
   });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.dropTable('usuarios');
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-exports.down = function(knex) {
-  
-};
