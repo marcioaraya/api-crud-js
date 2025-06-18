@@ -36,7 +36,7 @@ Pode criar a base de dados de exemplo de duas formas (escolha apenas uma das man
    ```
 2. Depois, em um shell digite:
 ```
-npx migrations:latest --knexfile knexfile.js
+npx knex migrate:latest --knexfile knexfile.js
 ```
 irá criar a tabela `usuarios`  
 
